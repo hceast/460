@@ -64,8 +64,18 @@ for j in Node2:
 
 #Constraint 2
 for k in Trucks:
-    for n in range(1, N):
-        prob += ((pulp.lpSum(I[i][n][k] for i in Node1)) - (pulp.lpSum(I[n][j][k] for j in range(2, len(N)))))  == 0,""
+    
+    for n in range(0, len(N)):
+        I_ink = []
+        I_njk = []
+        for i in range(0, len(N)-1):
+            if i != n:
+                I_ink += [I[i][n][k]]
+        for j in range(1, len(N)):
+            if j != n:
+                I_njk += [I[n][j][k]]
+       
+        prob += (pulp.lpSum(I_ink) - pulp.lpSum(I_njk)) == 0,""
         
 #Constraint 3
 for k in Trucks:
