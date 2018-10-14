@@ -131,22 +131,14 @@ while (i < len(DV)):
     if i == (len(DV) - 1):
         file.close
 
-#%%
-#Use Addresses[] with ArcGIS geocoder to convert addresses to coordinates
-#Importing packages
-from arcgis.gis import GIS
-from arcgis.geocoding import geocode
-dev_gis = GIS()
-
-#Conversion
+#%%  
+#Conversion using get_coords
+from GetCoords import get_coords  
+        
 i = 0
-address = ""
 CoordMat = []
 while (i < len(Addresses)):
-    address = str(Addresses[i])
-    geocode_result = geocode(address)[0]
-    location = geocode_result["location"]
-    coords = (location["x"], location["y"])
+    coords = get_coords(Addresses[i])
     CoordMat.append(coords)
     i += 1
 
@@ -161,6 +153,6 @@ while (i < len(CoordMat)):
     i += 1
     if i == (len(Addresses) - 1):
         file.close
-
+        
 #%%
         
