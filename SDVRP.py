@@ -7,9 +7,9 @@ Created on Sat Oct 13 15:52:33 2018
 """
 
 import pulp
-import matplotlib.pyplot as plt
 import time
 import pandas as pd
+import numpy as np
 from haversine import haversine
 
 #Read in data
@@ -35,54 +35,57 @@ while i < 208:
 
 N.append(N[0])
 
-#Edge Set
-E = []
-E_i = []
+#Create Distance matrix, which is the set of all edges e_ij, or E
+E = np.zeros(shape = (len(N), len(N)))
 i = 0
 j = 0
+
 for i in range(len(N)):
-    E += [[haversine(N[i][0], N[i][1], N[j][0], N[j][1]) for j in range(len(N))]]
+    for j in range(len(N)):
+        E[i][j] = haversine(N[i][0], N[i][1], N[j][0], N[j][1])
+        
 
 #Nodes and Trucks for LP
 Trucks = [i for i in range(1, V+1)]
 Node1 = [i for i in range(len(N)-1)]
 Node2 = [i for i in range(1, len(N))]
 
+
 #Create Problem
 prob = pulp.LpProblem("Vehicle Routing Problem", pulp.LpMinimize)
 
 #Create Decision Variable
 #I_ijk is binary 1 if truck k goes from customer i to j
-I = pulp.LpVariable.dicts("I_ijk", (Node1,Node2,Trucks), 0, 1, pulp.LpInteger)
+I = pulp.LpVariable.dicts("I_kij", (Trucks, Node1, Node2), 0, 1, pulp.LpInteger)
 
-#Objective function - minimize sum of euclidian distance traveled
-prob += pulp.lpSum(pulp.lpSum(pulp.lpSum(E[i][j] * I[i][j][k] for j in Node2) for i in Node1) for k in Trucks),"Minimize Distance"
+#Objective function - minimize cumulative euclidian distance over all routes K
+prob += pulp.lpSum(pulp.lpSum(pulp.lpSum(E[i][j] * I[k][i][j] for j in Node2) for i in Node1) for k in Trucks),"Minimize Distance"
 
 #Constraint 1
 for j in Node2:
-    prob += pulp.lpSum(pulp.lpSum(I[i][j][k] for i in Node1) for k in Trucks) == 1,""
+    prob += pulp.lpSum(pulp.lpSum(I[k][i][j] for i in Node1) for k in Trucks) == 1,""
 
 #Constraint 2
 for k in Trucks:
     
     for n in range(0, len(N)):
-        I_ink = []
-        I_njk = []
         for i in range(0, len(N)-1):
             if i != n:
-                I_ink += [I[i][n][k]]
+                j = n
+
         for j in range(1, len(N)):
             if j != n:
-                I_njk += [I[n][j][k]]
+                i = n
        
-        prob += (pulp.lpSum(I_ink) - pulp.lpSum(I_njk)) == 0,""
+        prob += (pulp.lpSum(I[k][i][j]) - pulp.lpSum(I[k][i][j])) == 0,""
         
 #Constraint 3
 for k in Trucks:
-     prob += pulp.lpSum(pulp.lpSum(I[i][j][k] for i in Node1[0]) for j in Node2) <= 1,""
+     prob += pulp.lpSum(pulp.lpSum(I[k][i][j] for i in Node1[0]) for j in Node2) <= 1,""
 
 #Constraint 4
 for k in Trucks:
     for j in Node2:
         for i in Node1:
-            prob += pulp.lpSum(q[j]*I[i][j][k] for j in range(1, j)) >= pulp.lpSum(q[i]*I[i][j][k] for i in range(0, i)) + (q[j]*I[i][j][k]) -  (Q*(1-I[i][j][k]))
+            prob += pulp.lpSum(q[j]*I[k][i][j] for j in range(1, j)) >= pulp.lpSum(q[i]*I[k][i][j] for i in range(0, i)) + (q[j]*I[k][i][j]) -  (Q*(1-I[k][i][j]))
+
