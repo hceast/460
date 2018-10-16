@@ -112,13 +112,14 @@ prob += pulp.lpSum([x[0][j] for j in range(1, len(locations) - 1)]) <= K,""
 #2.5 ensures vehicle capacity not exceeded
 for i in range(len(locations)):
     for j in range(len(locations)):
-        prob += y[j] >= y[i] + (demands[j] * x[i][j]) - (Q * (1 - x[i][j])),""
+        if (i != j):
+            prob += y[j] >= y[i] + (demands[j] * x[i][j]) - (Q * (1 - x[i][j])),""
         #prob += y[j] >= y[i] + demands[j] * x[i][j],""
 
 #2.6 ensures vehicle capacity not exceeded
-#for i in range(len(locations)):
-    #prob += demands[i] <= y[i] <= Q,""
-    #prob += y[i] >= demands[i],""
+for i in range(len(locations)):
+    prob += demands[i] <= y[i] <= Q,""
+    prob += y[i] >= demands[i],""
 
 print("Begin solver: ", time.time()-start_clock)
 # The problem is solved using PuLP's choice of Solver
