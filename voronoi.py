@@ -66,6 +66,16 @@ get_adjacent(point, vor)
 #[145, 142, 6, 167, 206, 144]
 
 #%%
+#All adjacencies
+all_adjacencies = []
+
+i = 0
+for i in range(len(Coords)):
+    point = (Coords[0][i], Coords[1][i])
+    adj_nodes = get_adjacent(point, vor)
+    all_adjacencies.append(adj_nodes)
+
+#%%
 #Generate necessary lists for operations to be performed
 reg = vor.point_region
 input_points = vor.points
