@@ -5,23 +5,30 @@ Created on Wed Oct 10 14:29:32 2018
 
 @author: igmcnelis
 """
-
 import pandas as pd
 
 #Read in the re-formatted Excel file
 xlsx1 = pd.ExcelFile("EAM_Delivery_Data_517.xlsx")
 #Construct a DataFrame for each sheet
-mykawa = xlsx1.parse(0)
-stafford = xlsx1.parse(1)
-sweetwater = xlsx1.parse(2)
+mykawa_517 = xlsx1.parse(0)
+stafford_517 = xlsx1.parse(1)
+sweetwater_517 = xlsx1.parse(2)
 
+#Read in the re-formatted Excel file
+xlsx2 = pd.ExcelFile("EAM_Delivery_Data_524.xlsx")
+#Construct a DataFrame for each sheet
+mykawa_524 = xlsx1.parse(0)
+stafford_524 = xlsx1.parse(1)
+sweetwater_524 = xlsx1.parse(2)
 
+"""
 #Read in the Facility Address Excel file
 xlsx2 = pd.ExcelFile("Building Address.xlsx")
 #Construct DataFrame
 facilities = xlsx2.parse(0)
 
 #%%
+
 #For Facilities
 S_NameNum = facilities.loc[:, "Facility Address Line 1"]
 City = facilities.loc[:, "Facility City Name"]
@@ -48,65 +55,125 @@ while (i < len(S_NameNum)):
         print(len(FacAddresses))
         i += 1
         j = len(FacAddresses) - 1
-
+"""
 #%%
 #This creates lists using the columns containing the address components 
-S_Num = mykawa.loc[:, "Street Num"]
-S_Name = mykawa.loc[:, "Street Name"]
-City = mykawa.loc[:, "City Name"]
-Zip = mykawa.loc[:, "Postal Code"]
-DV_mykawa = mykawa.loc[:, "Deliv Packages Qty"]
+S_Num = mykawa_517.loc[:, "Street Num"]
+S_Name = mykawa_517.loc[:, "Street Name"]
+City = mykawa_517.loc[:, "City Name"]
+Zip = mykawa_517.loc[:, "Postal Code"]
+#DV_mykawa = mykawa.loc[:, "Deliv Packages Qty"]
 
 #Create Addresses in within a list Addresses[]
-DV = [0]
-Addresses = [FacAddresses[9]]
+#DV = [0]
+#Addresses = [FacAddresses[9]]
+Addresses = []
 
 i = 0
 address = ""
 while (i < len(S_Num)):
     Address = str(S_Num[i]) + " " + S_Name[i] + " " + City[i] + ", " + "TX" + ", " + str(Zip[i])
     Addresses.append(Address) 
-    DV.append(DV_mykawa[i])
+    #DV.append(DV_mykawa[i])
     i += 1
 
 
 #Reapt above for Stafford
-S_Num = stafford.loc[:, "Street Num"]
-S_Name = stafford.loc[:, "Street Name"]
-City = stafford.loc[:, "City Name"]
-Zip = stafford.loc[:, "Postal Code"]
-DV_stafford = stafford.loc[:, "Deliv Packages Qty"]
+S_Num = stafford_517.loc[:, "Street Num"]
+S_Name = stafford_517.loc[:, "Street Name"]
+City = stafford_517.loc[:, "City Name"]
+Zip = stafford_517.loc[:, "Postal Code"]
+#DV_stafford = stafford.loc[:, "Deliv Packages Qty"]
 
-DV.append(0)
-Addresses.append(FacAddresses[11])
+#DV.append(0)
+#Addresses.append(FacAddresses[11])
 
 i = 0
 address = ""
 while (i < len(S_Num)):
     address = str(S_Num[i]) + " " + S_Name[i] + " " + City[i] + ", " + "TX" + ", " + str(Zip[i])
     Addresses.append(address)
-    DV.append(DV_stafford[i])
+    #DV.append(DV_stafford[i])
     i += 1
 
 
 #Repeat above for Sweetwater
-S_Num = sweetwater.loc[:, "Street Num"]
-S_Name = sweetwater.loc[:, "Street Name"]
-City = sweetwater.loc[:, "City Name"]
-Zip = sweetwater.loc[:, "Postal Code"]
-DV_sweetwater = sweetwater.loc[:, "Deliv Packages Qty"]
+S_Num = sweetwater_517.loc[:, "Street Num"]
+S_Name = sweetwater_517.loc[:, "Street Name"]
+City = sweetwater_517.loc[:, "City Name"]
+Zip = sweetwater_517.loc[:, "Postal Code"]
+#DV_sweetwater = sweetwater.loc[:, "Deliv Packages Qty"]
 
-DV.append(0)
-Addresses.append(FacAddresses[6])
+#DV.append(0)
+#Addresses.append(FacAddresses[6])
 
 i = 0
 address = ""
 while (i < len(S_Num)):
     address = str(S_Num[i]) + " " + S_Name[i] + " " + City[i] + ", " + "TX" + ", " + str(Zip[i])
     Addresses.append(address)
-    DV.append(DV_sweetwater[i])
+    #DV.append(DV_sweetwater[i])
     i += 1
-         
+
+#%%
+#This creates lists using the columns containing the address components 
+S_Num = mykawa_524.loc[:, "Street Num"]
+S_Name = mykawa_524.loc[:, "Street Name"]
+City = mykawa_524.loc[:, "City Name"]
+Zip = mykawa_524.loc[:, "Postal Code"]
+#DV_mykawa = mykawa.loc[:, "Deliv Packages Qty"]
+
+#Create Addresses in within a list Addresses[]
+#DV = [0]
+#Addresses = [FacAddresses[9]]
+Addresses = []
+
+i = 0
+address = ""
+while (i < len(S_Num)):
+    Address = str(S_Num[i]) + " " + S_Name[i] + " " + City[i] + ", " + "TX" + ", " + str(Zip[i])
+    Addresses.append(Address) 
+    #DV.append(DV_mykawa[i])
+    i += 1
+
+
+#Reapt above for Stafford
+S_Num = stafford_524.loc[:, "Street Num"]
+S_Name = stafford_524.loc[:, "Street Name"]
+City = stafford_524.loc[:, "City Name"]
+Zip = stafford_524.loc[:, "Postal Code"]
+#DV_stafford = stafford.loc[:, "Deliv Packages Qty"]
+
+#DV.append(0)
+#Addresses.append(FacAddresses[11])
+
+i = 0
+address = ""
+while (i < len(S_Num)):
+    address = str(S_Num[i]) + " " + S_Name[i] + " " + City[i] + ", " + "TX" + ", " + str(Zip[i])
+    Addresses.append(address)
+    #DV.append(DV_stafford[i])
+    i += 1
+
+
+#Repeat above for Sweetwater
+S_Num = sweetwater_524.loc[:, "Street Num"]
+S_Name = sweetwater_524.loc[:, "Street Name"]
+City = sweetwater_524.loc[:, "City Name"]
+Zip = sweetwater_524.loc[:, "Postal Code"]
+#DV_sweetwater = sweetwater.loc[:, "Deliv Packages Qty"]
+
+#DV.append(0)
+#Addresses.append(FacAddresses[6])
+
+i = 0
+address = ""
+while (i < len(S_Num)):
+    address = str(S_Num[i]) + " " + S_Name[i] + " " + City[i] + ", " + "TX" + ", " + str(Zip[i])
+    Addresses.append(address)
+    #DV.append(DV_sweetwater[i])
+    i += 1
+    
 #%%
 #Write Addresses to a text file
 file = open("Addresses_517.txt", "w")
@@ -120,6 +187,7 @@ while (i < len(Addresses)):
         file.close
         
 #%%
+"""
 #Write Delivery Volumes to a text file
 file = open("DelivVols_517.txt", "w")
 i = 0
@@ -130,7 +198,7 @@ while (i < len(DV)):
     i += 1
     if i == (len(DV) - 1):
         file.close
-
+"""
 #%%  
 #Conversion using get_coords
 from GetCoords import get_coords  
