@@ -8,7 +8,7 @@ Created on Wed Oct 17 13:40:17 2018
 This function takes the coordinates of a node of interest, along with the 
 outputs of scipy.spatial's voronoi function (vor).
 
-vor = Voronoi(Coords, qhull_options="Qbb Qc Qx")
+vor = Voronoi(Coords, qhull_options = "Qbb Qc Qx")
 """
 
 def get_adjacent(point, vor):
