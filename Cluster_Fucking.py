@@ -8,26 +8,26 @@ This is a temporary script file.
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.spatial import Voronoi, voronoi_plot_2d
-from read_customers_local import get_df
 from adjacent import get_adjacent
 from haversine import haversine
 
-dist_center, mykawa_deliv_517, mykawa_deliv_524, stafford_deliv_517, stafford_deliv_524, sweetwater_deliv_517, sweetwater_deliv_524 = get_df()
+deliv_517 = pd.read_excel("May_17_Delivery_Data.xlsx", sheet_name = "Delivery Data")
+deliv_517 = deliv_517[["Longitude", "Latitude", "Delivery Volume"]].copy()
 
-deliv_517 = pd.concat([mykawa_deliv_517, stafford_deliv_517, sweetwater_deliv_517], ignore_index = True)
-deliv_517 = deliv_517[["Longitude", "Latitude", "Deliv Packages Qty"]].copy()
+dist_center = pd.read_excel("May_17_Delivery_Data.xlsx", sheet_name = "Centers")
+dist_center = dist_center[["Longitude", "Latitude"]].copy()
 
 center_vols = [0, 0, 0]
 se1 = pd.Series(center_vols)
-dist_center["Deliv Packages Qty"] = se1.values 
+dist_center["Delivery Volume"] = se1.values 
 
-deliv_517 = pd.concat([deliv_517, dist_center[["Longitude", "Latitude", "Deliv Packages Qty"]]], ignore_index = True)
+deliv_517 = pd.concat([deliv_517, dist_center[["Longitude", "Latitude", "Delivery Volume"]]], ignore_index = True)
 
 #%%
 vor = Voronoi(deliv_517[["Longitude", "Latitude"]], qhull_options = "Qbb Qc Qx")
-#voronoi_plot_2d(vor)
-#fig = plt.figure()
-#plt.show()
+voronoi_plot_2d(vor)
+fig = plt.figure()
+plt.show()
 
 all_adj = []
 
@@ -64,7 +64,7 @@ Cluster[i].nodes_idx.append(Cluster[i].centroid.index)
 """
 
 #Create Node set
-Node = [node(i, (deliv_517["Longitude"][i], deliv_517["Latitude"][i]), deliv_517["Deliv Packages Qty"], deliv_517["Adj Nodes"][i]) for i in range(len(deliv_517))]
+Node = [node(i, (deliv_517["Longitude"][i], deliv_517["Latitude"][i]), deliv_517["Delivery Volume"][i], deliv_517["Adj Nodes"][i]) for i in range(len(deliv_517))]
 
 #Establish set Outside, which tracks the nodes that are not assigned to a cluster
 Outside = []

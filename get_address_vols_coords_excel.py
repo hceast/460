@@ -10,7 +10,7 @@ import pandas as pd
 from GetCoords import get_coords
 
 facilities = pd.read_excel("Building_Address.xlsx")
-facilities = facilities.loc[[13,19,7],['Facility Name','Facility Latitude','Facility Longitude']]
+facilities = facilities.loc[[13,19,7],["Facility Name","Latitude","Longitude"]]
 center_capacity = [999999999, 999999999, 999999999]
 se = pd.Series(center_capacity)
 facilities["Deliv Center Capac"] = se.values 
