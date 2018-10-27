@@ -23,13 +23,14 @@ Days used are 5/17 and 5/24
 
 ############## Enter info to gis 
 # gis = GIS("portal url", "username", "password")
+# gis = GIS("https://tamu.maps.arcgis.com", "username", "password")
 
 #Combines addresses into on cell assuming it is given in a dataframe and the information
 # is contained in columns called 'Street Num', 'Street Name', and 'City Name'
 def combine_address(p):
     address = []
     for i,row in p.iterrows():
-        address += [p.loc[i,'Street Num'] + ' ' +  p.loc[i,'Street Name'] + ' ' + p.loc[i,'City Name']]
+        address += [p.loc[i,'Street Num'] + ' ' +  p.loc[i,'Street Name'] + ' ' + p.loc[i,'City Name'] + ' Texas, ' + p.loc[i,'Postal Code']]
     return address
 
 #converts address into latitude and longitude
@@ -99,13 +100,13 @@ def format_data():
 
 ###### reads excel file of all data that was created above
 def get_df():
-    dist_center = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\EAM_Data.xlsx', sheet_name = 'Centers')
-    mykawa_deliv_517 = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\EAM_Data.xlsx', sheet_name = 'Mykawa 5-17')
-    mykawa_deliv_524 = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\EAM_Data.xlsx', sheet_name = 'Mykawa 5-24')
-    stafford_deliv_517 = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\EAM_Data.xlsx', sheet_name = 'Stafford 5-17')
-    stafford_deliv_524 = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\EAM_Data.xlsx', sheet_name = 'Stafford 5-24')
-    sweetwater_deliv_517 = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\EAM_Data.xlsx', sheet_name = 'Sweetwater 5-17')
-    sweetwater_deliv_524 = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\EAM_Data.xlsx', sheet_name = 'Sweetwater 5-24')
+    dist_center = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\new_EAM_Data.xlsx', sheet_name = 'Centers')
+    mykawa_deliv_517 = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\new_EAM_Data.xlsx', sheet_name = 'Mykawa 5-17')
+    mykawa_deliv_524 = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\new_EAM_Data.xlsx', sheet_name = 'Mykawa 5-24')
+    stafford_deliv_517 = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\new_EAM_Data.xlsx', sheet_name = 'Stafford 5-17')
+    stafford_deliv_524 = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\new_EAM_Data.xlsx', sheet_name = 'Stafford 5-24')
+    sweetwater_deliv_517 = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\new_EAM_Data.xlsx', sheet_name = 'Sweetwater 5-17')
+    sweetwater_deliv_524 = pd.read_excel(r'C:\Users\heast\Documents\Tamu\460\Coding\new_EAM_Data.xlsx', sheet_name = 'Sweetwater 5-24')
     
     return dist_center, mykawa_deliv_517, mykawa_deliv_524, stafford_deliv_517, stafford_deliv_524, sweetwater_deliv_517, sweetwater_deliv_524
 
@@ -137,7 +138,7 @@ def add_lat_long():
     
     
     ####### Write data to Excel file
-    writer = pd.ExcelWriter(r'C:\Users\heast\Documents\Tamu\460\Coding\EAM_Data.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter(r'C:\Users\heast\Documents\Tamu\460\Coding\new_EAM_Data.xlsx', engine='xlsxwriter')
     
     dist_center.to_excel(writer, sheet_name='Centers')
     

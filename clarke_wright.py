@@ -9,14 +9,24 @@ Created on Wed Oct 10 11:24:21 2018
 import pandas as pd
 import matplotlib.pyplot as plt
 from math import radians, cos, sin, asin, sqrt
+import numpy as np
 
-
-####################
-### may want to establish neighbor, c, cap, and max duration as global variables
-    #so they dont all need to be passed
-
-
-#############
+########## takes an input dataframe p of customer information (address, lat/long, deliv volume...)
+    #### and an input data frame d of distribution center information
+    #### returns formatted dataframes to be used in clarke wright
+def format_dat(p,d):
+    #find location address
+    for index,row in d.iterrows():
+        if (d.loc[index,'Center Num'] == p.loc[0,'Center Num']):
+            break
+        
+    #locations of customers - depot is first
+    locations = np.concatenate(([[d.loc[index,'Longitude'], d.loc[index,'Latitude']]], np.concatenate(([p.loc[:,'Longitude']],[p.loc[:,'Latitude']])).T))
+    
+    demand = np.concatenate(([0],p.loc[:,'Deliv Packages Qty'].values))
+    demands = pd.DataFrame(demand)
+    
+    return locations, demands
 
 def haversine(long1, lat1, long2, lat2):
     """
@@ -117,6 +127,7 @@ def travel_time(route, index, c):
     return time    
 
 
+#Add options for constraints -- trip duration, voronoi neighbors
 def clarke_wright(locations, demand, neighbor, cap):     
     #max allowed route duration-- expand to be duration only including trips to customers
         #also expand to factor in 3.5 hours needed for a driver
@@ -447,8 +458,8 @@ def clarke_wright(locations, demand, neighbor, cap):
             '''
     cost = calc_cost(locations, route, c)
     #display routes created       
-    #print(route)
-    #print('Total Cost:',cost)
+    print(route)
+    print('Total Cost:',cost)
     return route
 
 

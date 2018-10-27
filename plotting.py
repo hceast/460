@@ -18,6 +18,8 @@ import numpy as np
 import string
 
 #plots clarke_wright routing given a dataframe p of one center's customers
+#currently runs all clarke-wright calculations and then plots - doesnt just take calculated routes
+# and plot those
 def cw_plot(p, d):
     #Capacity of truck
     capacity = 150

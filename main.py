@@ -8,48 +8,35 @@ Created on Fri Oct 12 18:45:11 2018
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from clarke_wright import clarke_wright
+from clarke_wright import clarke_wright, format_dat
 import time
 from scipy.spatial import Delaunay, Voronoi, voronoi_plot_2d
 from collections import defaultdict
+from read_customers import get_df
 import itertools
+from plotting import cw_plot, delaunay_plot
+from get_adjacent import get_adjacent, adj_set
 
 start_clock = time.time()
 
-file_loc = pd.read_csv(r"C:\Users\heast\Documents\Tamu\460\Coding\git\Coords_517.txt", sep = ",", header = None)
-locations = np.concatenate(([[-95.3211,29.6759]],file_loc.loc[0:206].values), axis = 0)
+dist, my_517, my_524, staf_517, staf_524, swee_517, swee_524 = get_df()
 
-demands = pd.read_csv(r"C:\Users\heast\Documents\Tamu\460\Coding\git\Deliv_517.txt", header = None)
-demands = demands.loc[:207]
+
+############# Only runs for single depot
+###file_loc = pd.read_csv(r"C:\Users\heast\Documents\Tamu\460\Coding\git\Coords_517.txt", sep = ",", header = None)
+###locations = np.concatenate(([[-95.3211,29.6759]],file_loc.loc[0:206].values), axis = 0)
+
+#demands = pd.read_csv(r"C:\Users\heast\Documents\Tamu\460\Coding\git\Deliv_517.txt", header = None)
+##demands = demands.loc[:207]
+
+locations, demands = format_dat(my_517, dist)
+
 
 #capcity of vehicle
 cap = 150
 
-'''
-#Sample addresses - first pair is depot
-locations = \
-                [(4, 4), # depot
-                 (2, 0), (8, 0), # row 0
-                 (0, 1), (1, 1),
-                 (5, 2), (7, 2),
-                 (3, 3), (6, 3),
-                 (5, 5), (8, 5),
-                 (1, 6), (2, 6),
-                 (3, 7), (6, 7),
-                 (0, 8), (7, 8)]
-demand = \
-            [0, # depot
-             1, 1, # 1, 2
-             2, 4, # 3, 4
-             2, 4, # 5, 6
-             8, 8, # 7, 8
-             1, 2, # 9,10
-             1, 2, # 11,12
-             4, 4, # 13, 14
-             8, 8] # 15, 16
+nei = adj_set(locations)
 
-demands = pd.DataFrame(demand)
-'''
 #calculate list of adjacent polygons in Voronoi diagram
 tri = Delaunay(locations, qhull_options = 'QJ')
 neighbor = defaultdict(set)
@@ -63,10 +50,11 @@ plt.plot(locations[1:,0], locations[1:,1], 'o')
 plt.plot(locations[0,0], locations[0,1], 'ro', markersize = 15)
 plt.show()
 
-for i in range(len(neighbor)):
-    print(i,':',neighbor[i])
+#for i in range(len(neighbor)):
+#    print(i,':',neighbor[i])
         
 route = clarke_wright(locations, demands, neighbor, cap)
+route2 = clarke_wright(locations, demands, nei, cap)
 
     
 '''
