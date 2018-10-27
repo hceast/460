@@ -17,17 +17,18 @@ deliv_517 = deliv_517[["Longitude", "Latitude", "Delivery Volume"]].copy()
 dist_center = pd.read_excel("May_17_Delivery_Data.xlsx", sheet_name = "Centers")
 dist_center = dist_center[["Longitude", "Latitude"]].copy()
 
-center_vols = [0, 0, 0]
-se1 = pd.Series(center_vols)
+center_capac = [(deliv_517["Delivery Volume"].sum()/3), (deliv_517["Delivery Volume"].sum()/3), (deliv_517["Delivery Volume"].sum()/3)]
+
+se1 = pd.Series(center_capac)
 dist_center["Delivery Volume"] = se1.values 
 
 deliv_517 = pd.concat([deliv_517, dist_center[["Longitude", "Latitude", "Delivery Volume"]]], ignore_index = True)
 
 #%%
 vor = Voronoi(deliv_517[["Longitude", "Latitude"]], qhull_options = "Qbb Qc Qx")
-voronoi_plot_2d(vor)
-fig = plt.figure()
-plt.show()
+#voronoi_plot_2d(vor)
+#fig = plt.figure()
+#plt.show()
 
 all_adj = []
 
@@ -77,7 +78,7 @@ for i in range(len(Node)):
 Assigned_Nodes = []
 
 #Cluster Initialization
-Cluster = [cluster(Node[i], 999999999999) for i in range(465,468)]
+Cluster = [cluster(Node[i], deliv_517["Delivery Volume"][i]) for i in range(465,468)]
 
 i = 0
 for i in range(len(Cluster)):
@@ -156,9 +157,11 @@ for i in range(len(Cluster)):
             Reachable.append(Cluster[i].reachable[j])         
                 
 #%%
-i =0
-for i in range(0, 456):
-    Best_Reachable_Dist = []
+l = 0
+for l in range(0, 456):
+    Best_Reachable_dist = []
+    Weight_Improvement = []
+    
     C_star = ""
     q_star = ""
     p_star = ""
@@ -166,6 +169,11 @@ for i in range(0, 456):
     i = 0
     for i in range(len(Cluster)):
         best_dist = "None"
+        
+        current_deviation = ""
+        new_deviation = ""
+        
+        current_deviation = abs(Cluster[i].weight - Cluster[i].capac)
         
         j = 0
         for j in range(len(Cluster[i].extensible)):
@@ -181,10 +189,16 @@ for i in range(0, 456):
                     best_dist = Node[Node[Cluster[i].extensible[j]].reachable[k]].min_reachable_dist
                     Cluster[i].best_extensible = Cluster[i].extensible[j]
                     Cluster[i].best_reachable = Node[Cluster[i].extensible[j]].reachable[k]
-                    
-        Best_Reachable_Dist.append(Node[Cluster[i].best_reachable].min_reachable_dist)
+        
+        new_deviation = abs((Cluster[i].weight + Node[Cluster[i].best_reachable].weight) - Cluster[i].capac)
+            
+        #weight_factor = (Cluster[i].weight + Node[Cluster[i].best_reachable].weight)/ Cluster[i].capac            
+        #Best_Reachable_dist.append(Node[Cluster[i].best_reachable].min_reachable_dist * weight_factor)
+
+        Weight_Improvement.append(current_deviation - new_deviation)
+        
     
-    C_star = Best_Reachable_Dist.index(min(Best_Reachable_Dist))
+    C_star = Weight_Improvement.index(max(Weight_Improvement))
     q_star = Cluster[C_star].best_reachable
     p_star = Cluster[C_star].best_extensible
                     
@@ -194,7 +208,6 @@ for i in range(0, 456):
     Node[q_star].cluster = Cluster[C_star].index
     
     Cluster[C_star].weight += Node[q_star].weight
-    Cluster[C_star].capac -= Cluster[C_star].weight
     
     #Update Outside
     Node[q_star].isOutside = False
