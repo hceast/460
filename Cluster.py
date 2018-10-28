@@ -9,13 +9,14 @@ from scipy.spatial import Voronoi
 from adjacent import get_adjacent
 
 class cluster:
-    def __init__(self, centroid, capac):
+    def __init__(self, centroid, balance_target, capac):
         
         self.index = 0
-        self.centroid = centroid 
-        
         self.Nodes = []
         self.nodes_idx = []
+        self.centroid = centroid 
+        
+        self.balance_target = balance_target
         self.capac = capac
         self.weight = 0
         

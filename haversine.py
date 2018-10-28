@@ -7,11 +7,15 @@ Created on Thu Oct 11 17:55:33 2018
 """
 from math import radians, cos, sin, asin, sqrt
 
-def haversine(long1, lat1, long2, lat2):
+def haversine(coords1, coords2):
     """
     Calculate the great circle distance between two points 
     on the earth (specified in decimal degrees)
     """
+    long1 = coords1[0]
+    lat1 = coords1[1]
+    long2 = coords2[0]
+    lat2 = coords2[1]
     # convert decimal degrees to radians 
     long1, lat1, long2, lat2 = map(radians, [long1, lat1, long2, lat2])
 

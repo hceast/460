@@ -62,7 +62,7 @@ S_Num = mykawa_517.loc[:, "Street Num"]
 S_Name = mykawa_517.loc[:, "Street Name"]
 City = mykawa_517.loc[:, "City Name"]
 Zip = mykawa_517.loc[:, "Postal Code"]
-#DV_mykawa = mykawa.loc[:, "Deliv Packages Qty"]
+DV_mykawa = mykawa.loc[:, "Deliv Packages Qty"]
 
 #Create Addresses in within a list Addresses[]
 #DV = [0]
