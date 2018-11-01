@@ -43,11 +43,12 @@ deliv_517["Longitude"] = Long
 deliv_517["Latitude"] = Lat
 
 #%%
+"""
 writer = pd.ExcelWriter("May_17_Delivery_Data.xlsx", engine='xlsxwriter')
 facilities.to_excel(writer, sheet_name = "Centers")
 deliv_517.to_excel(writer, sheet_name = "Delivery Data")
 writer.save()
-
+"""
 #%%
 deliv_524 = pd.concat([pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Mykawa_524"), pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Stafford_524"), pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Sweetwater_524")], ignore_index = True)
 
@@ -75,7 +76,96 @@ deliv_524["Longitude"] = Long
 deliv_524["Latitude"] = Lat
 
 #%%
+"""
 writer = pd.ExcelWriter("May_24_Delivery_Data.xlsx", engine='xlsxwriter')
 facilities.to_excel(writer, sheet_name = "Centers")
 deliv_524.to_excel(writer, sheet_name = "Delivery Data")
+writer.save()
+"""
+#%%
+import pandas as pd
+
+deliv_517 = pd.concat([pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Mykawa_517"), pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Stafford_517"), pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Sweetwater_517")], ignore_index = True)
+deliv_517 = deliv_517[["Postal Code", "Facility Loc Num", "Deliv Packages Qty"]].copy()
+
+zip_codes = []
+
+i = 0
+for i in range(len(deliv_517)):
+    if (deliv_517["Postal Code"][i] not in zip_codes):
+        zip_codes.append(deliv_517["Postal Code"][i])
+
+Zip_Vols = []
+Assoc_Fac = []        
+
+i = 0
+for i in range(len(zip_codes)):
+    pkg_vol = 0
+    
+    j = 0
+    for j in range(len(deliv_517)):
+        if(deliv_517["Postal Code"][j] == zip_codes[i]):
+            pkg_vol += deliv_517["Deliv Packages Qty"][j]
+            
+    j = 0
+    for j in range(len(deliv_517)):
+        if(deliv_517["Postal Code"][j] == zip_codes[i]):
+            Assoc_Fac.append(deliv_517["Facility Loc Num"][j])
+            break
+    
+    Zip_Vols.append(pkg_vol)
+    
+zip_517 = pd.DataFrame()
+zip_517["Zip Code"] = zip_codes
+zip_517["Zip Delivery Volume"] = Zip_Vols
+zip_517["Assigned Facility"] = Assoc_Fac
+
+#%%
+
+writer = pd.ExcelWriter("May_17_Zip_Data.xlsx", engine='xlsxwriter')
+zip_517.to_excel(writer, sheet_name = "Zip Data")
+writer.save()
+
+#%%
+import pandas as pd
+
+deliv_524 = pd.concat([pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Mykawa_524"), pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Stafford_524"), pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Sweetwater_524")], ignore_index = True)
+deliv_524 = deliv_524[["Postal Code", "Facility Loc Num", "Deliv Packages Qty"]].copy()
+
+zip_codes = []
+
+i = 0
+for i in range(len(deliv_524)):
+    if (deliv_524["Postal Code"][i] not in zip_codes):
+        zip_codes.append(deliv_524["Postal Code"][i])
+
+Zip_Vols = []
+Assoc_Fac = []        
+
+i = 0
+for i in range(len(zip_codes)):
+    pkg_vol = 0
+    
+    j = 0
+    for j in range(len(deliv_524)):
+        if(deliv_524["Postal Code"][j] == zip_codes[i]):
+            pkg_vol += deliv_524["Deliv Packages Qty"][j]
+            
+    j = 0
+    for j in range(len(deliv_524)):
+        if(deliv_524["Postal Code"][j] == zip_codes[i]):
+            Assoc_Fac.append(deliv_524["Facility Loc Num"][j])
+            break
+    
+    Zip_Vols.append(pkg_vol)
+    
+zip_524 = pd.DataFrame()
+zip_524["Zip Code"] = zip_codes
+zip_524["Zip Delivery Volume"] = Zip_Vols
+zip_524["Assigned Facility"] = Assoc_Fac
+
+#%%
+
+writer = pd.ExcelWriter("May_24_Zip_Data.xlsx", engine='xlsxwriter')
+zip_524.to_excel(writer, sheet_name = "Zip Data")
 writer.save()
