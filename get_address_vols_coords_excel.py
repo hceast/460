@@ -7,7 +7,9 @@ Created on Fri Oct 26 13:14:02 2018
 """
 
 import pandas as pd
+import numpy as np
 from GetCoords import get_coords
+from haversine_coords import haversine
 
 facilities = pd.read_excel("Building_Address.xlsx")
 facilities = facilities.loc[[13,19,7],["Facility Name","Latitude","Longitude"]]
@@ -43,6 +45,25 @@ deliv_517["Longitude"] = Long
 deliv_517["Latitude"] = Lat
 
 #%%
+#Distance Matrix
+D_Mat = np.zeros((len(deliv_517), len(deliv_517))) 
+
+i = 0
+for i in range(len(deliv_517)):
+    coords1 = (deliv_517["Longitude"][i], deliv_517["Latitude"][i])
+    
+    j = 0
+    for j in range(len(deliv_517)):
+        coords2 = (deliv_517["Longitude"][j], deliv_517["Latitude"][j])
+        D_Mat[i][j] = haversine(coords1, coords2)
+        
+Dist_Mat = pd.DataFrame(D_Mat)
+
+writer = pd.ExcelWriter("May_17_Distances.xlsx", engine='xlsxwriter')
+Dist_Mat.to_excel(writer, sheet_name = "Distance Matrix")
+writer.save()
+
+#%%
 """
 writer = pd.ExcelWriter("May_17_Delivery_Data.xlsx", engine='xlsxwriter')
 facilities.to_excel(writer, sheet_name = "Centers")
@@ -74,6 +95,25 @@ deliv_524["Delivery Address"] = Addresses
 deliv_524["Delivery Volume"] = Deliv_Vols
 deliv_524["Longitude"] = Long
 deliv_524["Latitude"] = Lat
+
+#%%
+#Distance Matrix
+D_Mat = np.zeros((len(deliv_524), len(deliv_524))) 
+
+i = 0
+for i in range(len(deliv_524)):
+    coords1 = (deliv_524["Longitude"][i], deliv_524["Latitude"][i])
+    
+    j = 0
+    for j in range(len(deliv_524)):
+        coords2 = (deliv_524["Longitude"][j], deliv_524["Latitude"][j])
+        D_Mat[i][j] = haversine(coords1, coords2)
+        
+Dist_Mat = pd.DataFrame(D_Mat)
+
+writer = pd.ExcelWriter("May_24_Distances.xlsx", engine='xlsxwriter')
+Dist_Mat.to_excel(writer, sheet_name = "Distance Matrix")
+writer.save()
 
 #%%
 """
