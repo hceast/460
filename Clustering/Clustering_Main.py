@@ -90,7 +90,7 @@ from Cluster import cluster
 from Reachable_Extensible import get_reach_and_ext
 from Best_Reach_Ext import best_reach_ext_nodes, best_reach_ext_clusters
 from Assign_and_Update import assign_and_update
-from Plot_Clusters import plot_clusters
+from Decision_Criteria import priority_weight, priority_card
 
 #Create Node set
 Node = [node(i, (deliv_517["Longitude"][i], deliv_517["Latitude"][i]), deliv_517["Delivery Volume"][i], deliv_517["Adj Nodes"][i]) for i in range(len(deliv_517))]
@@ -170,106 +170,11 @@ for l in range(0, 454):
     #Selected cluster, selected reachable (q_star) and selected extensible (p-star)
     C_star = ""
     q_star = ""
-    p_star = ""    
-    """
-    #Determine C_Star
-    Card = []
-        
-    i = 0
-    for i in range(len(Cluster)):
-        Card.append(len(Cluster[i].Nodes))
-    """
-    Weight_Improvement = []
+    p_star = "" 
     
-    i = 0
-    for i in range(len(Cluster)):
-        #Current deviation from target weight
-        current_deviation = ""
-        current_deviation = abs(Cluster[i].weight - Cluster[i].balance_target)
-        #Deviation should the best reachable node we are examining be added
-        new_deviation = ""
-        new_deviation = abs((Cluster[i].weight + Cluster[i].best_reachable.weight) - Cluster[i].balance_target)
-        
-        #Weight_Improvement.append(current_deviation - new_deviation)
-        
-        #Weighted against distance. Acceptable results alone. Catastrophic when used with tiebreaker.
-        Weight_Improvement.append((current_deviation - new_deviation)*(1/Cluster[i].best_reachable.min_reachable_dist))
-    
-    #Select cluster to be the cluster that has the node that provides the best improvement w.r.t. the weight criterion
-    #C_star = Weight_Improvement.index(max(Weight_Improvement))
-    """
-    #Cardinality Tiebreak
-    min_card = min(Card)
-    candidates = []
-    
-    #Find the ones that tie
-    i = 0
-    for i in range(len(Card)):
-        if (Card[i] == min_card):
-            candidates.append(i)
-    #If there are no ties, select the cluster as above
-    if (len(candidates) > 1):
-
-        #Find the one that also minimizes distance.
-        Min_Reach_Dist = []
-        
-        i = 0
-        for i in range(len(candidates)):
-            Min_Reach_Dist.append(Cluster[candidates[i]].best_reachable.min_reachable_dist)
-        
-        C_star = candidates[Min_Reach_Dist.index(min(Min_Reach_Dist))]
-
-        Weight_Improvement = []
-    
-        i = 0
-        for i in range(len(candidates)):
-            #Current deviation from target weight
-            current_deviation = ""
-            current_deviation = abs(Cluster[candidates[i]].weight - Cluster[i].balance_target)
-            #Deviation should the best reachable node we are examining be added
-            new_deviation = ""
-            new_deviation = abs((Cluster[i].weight + Cluster[i].best_reachable.weight) - Cluster[i].balance_target)
-            
-           # Weight_Improvement.append(current_deviation - new_deviation)
-            Weight_Improvement.append((current_deviation - new_deviation)*(1/Cluster[i].best_reachable.min_reachable_dist))
-            
-        C_star = candidates[Weight_Improvement.index(max(Weight_Improvement))]
-
-    else:
-        C_star = Card.index(min(Card))
-    """
-    
-    #Weightbalance Tiebreak
-    best_improvement = max(Weight_Improvement)
-    candidates = []
-    
-    #Find the ones that tie
-    i = 0
-    for i in range(len(Weight_Improvement)):
-        if (Weight_Improvement[i] == best_improvement):
-            candidates.append(i)
-    #If there are no ties, select the cluster as above
-    if (len(candidates) > 1):
-        """
-        #Find the one that also minimizes distance.
-        Min_Reach_Dist = []
-        
-        i = 0
-        for i in range(len(candidates)):
-            Min_Reach_Dist.append(Cluster[candidates[i]].best_reachable.min_reachable_dist)
-        
-        C_star = candidates[Min_Reach_Dist.index(min(Min_Reach_Dist))]
-        """
-        Card = []
-        
-        i = 0
-        for i in range(len(candidates)):
-            Card.append(len(Cluster[candidates[i]].Nodes))
-        
-        C_star = Cluster[candidates[Card.index(min(Card))]]
-
-    else:
-        C_star = Cluster[Weight_Improvement.index(max(Weight_Improvement))]
+    #Determine C_star
+    #C_star = priority_weight(Cluster)
+    C_star = priority_card(Cluster)
     
     #Once you know your C_star, you know your q_star which is associated with a p_star
     q_star = C_star.best_reachable
