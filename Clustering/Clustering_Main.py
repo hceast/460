@@ -158,8 +158,7 @@ for i in range(len(Node)):
         Reachable.append(Node[i].index)
 
 #%%
-l = 0
-for l in range(0, 454):    
+while (len(Outside) > 12):
     
     #Identify the best reachable node for every extensible node, and the best extensible
     #node for every reachable node.
@@ -173,8 +172,8 @@ for l in range(0, 454):
     p_star = "" 
     
     #Determine C_star
-    #C_star = priority_weight(Cluster)
     C_star = priority_card(Cluster)
+    #C_star = priority_weight(Cluster)
     
     #Once you know your C_star, you know your q_star which is associated with a p_star
     q_star = C_star.best_reachable
@@ -210,6 +209,72 @@ for l in range(0, 454):
     for i in range(len(Node)):
         if (Node[i].isReachable == True):
             Reachable.append(Node[i].index)
+            
+#%%
+
+Cluster0_Nodes = Cluster[0].nodes_idx
+Cluster1_Nodes = Cluster[1].nodes_idx
+Cluster2_Nodes = Cluster[2].nodes_idx
+
+for i in range(len(Cluster0_Nodes)):
+    Node[Cluster0_Nodes[i]].num_clust += 1
+    
+    if (Cluster0_Nodes[i] in Cluster1_Nodes):
+        Node[Cluster0_Nodes[i]].num_clust += 1
+    if (Cluster0_Nodes[i] in Cluster2_Nodes):
+        Node[Cluster0_Nodes[i]].num_clust += 1
+        
+i = 0
+for i in range(len(Cluster[0].Nodes)):
+    print(Cluster[0].Nodes[i].num_clust)
+    
+for i in range(len(Cluster1_Nodes)):
+    Node[Cluster1_Nodes[i]].num_clust += 1
+    
+    if (Cluster1_Nodes[i] in Cluster0_Nodes):
+        Node[Cluster1_Nodes[i]].num_clust += 1
+    if (Cluster1_Nodes[i] in Cluster2_Nodes):
+        Node[Cluster1_Nodes[i]].num_clust += 1
+        
+i = 0
+for i in range(len(Cluster[1].Nodes)):
+    print(Cluster[1].Nodes[i].num_clust)
+    
+for i in range(len(Cluster2_Nodes)):
+    Node[Cluster2_Nodes[i]].num_clust += 1
+    
+    if (Cluster2_Nodes[i] in Cluster1_Nodes):
+        Node[Cluster2_Nodes[i]].num_clust += 1
+    if (Cluster2_Nodes[i] in Cluster0_Nodes):
+        Node[Cluster2_Nodes[i]].num_clust += 1
+        
+i = 0
+for i in range(len(Cluster[2].Nodes)):
+    print(Cluster[2].Nodes[i].num_clust)
+
+#%%
+                
+i = 0
+for i in range(len(Cluster)):
+    
+    j = 0
+    for j in range(len(Cluster[i].Nodes)):
+        
+        k = 0
+        for k in range(len(Cluster[i].Nodes[j].adj_nodes)):
+            if (Node[Cluster[i].Nodes[j].adj_nodes[k]].cluster != i):
+                Cluster[i].Nodes[j].isBoundary = True
+                Cluster[i].boundary.append(Cluster[i].Nodes[j].index)
+                break
+
+Boundary = []
+
+i = 0            
+for i in range(len(Node)):
+    if (Node[i].isBoundary == True):
+        Boundary.append(Node[i].index)
+        
+
 
 #%%
 #Plotting and output information
@@ -248,3 +313,23 @@ print(len(Cluster[2].Nodes))
 print(Cluster[0].weight)
 print(Cluster[1].weight)
 print(Cluster[2].weight)
+
+#%%
+Facility_Affiliations = []
+
+i = 0
+for i in range(len(Node)):
+    if (Node[i].cluster == 0):
+        Facility_Affiliations.append("Mykawa")
+    if (Node[i].cluster == 1):
+        Facility_Affiliations.append("Stafford")
+    if (Node[i].cluster == 2):
+        Facility_Affiliations.append("Sweetwater")
+    if (Node[i].cluster == "None"):
+        Facility_Affiliations.append("None")
+        
+deliv_517["Facility Affiliations"] = Facility_Affiliations
+
+writer = pd.ExcelWriter("May_17_Clustering_Results.xlsx", engine='xlsxwriter')
+deliv_517.to_excel(writer, sheet_name = "Clustering Results")
+writer.save()

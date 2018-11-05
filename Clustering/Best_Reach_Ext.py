@@ -51,18 +51,20 @@ def best_reach_ext_nodes(Node):
 def best_reach_ext_clusters(Cluster):
     i = 0
     for i in range(len(Cluster)):
-        min_dist = "None"
         
-        j = 0
-        for j in range(len(Cluster[i].Nodes)):
+        if (Cluster[i].isExtensible == True):
+            min_dist = "None"
             
-            if(Cluster[i].Nodes[j].isExtensible == True):
-                if (min_dist == "None"):
-                    min_dist = Cluster[i].Nodes[j].best_reach.min_reachable_dist
-                    Cluster[i].best_extensible = Cluster[i].Nodes[j]
-                    Cluster[i].best_reachable = Cluster[i].Nodes[j].best_reach
-                elif (Cluster[i].Nodes[j].best_reach.min_reachable_dist < min_dist):
-                    min_dist = Cluster[i].Nodes[j].best_reach.min_reachable_dist
-                    Cluster[i].best_extensible = Cluster[i].Nodes[j]
-                    Cluster[i].best_reachable = Cluster[i].Nodes[j].best_reach
+            j = 0
+            for j in range(len(Cluster[i].Nodes)):
+                
+                if(Cluster[i].Nodes[j].isExtensible == True):
+                    if (min_dist == "None"):
+                        min_dist = Cluster[i].Nodes[j].best_reach.min_reachable_dist
+                        Cluster[i].best_extensible = Cluster[i].Nodes[j]
+                        Cluster[i].best_reachable = Cluster[i].Nodes[j].best_reach
+                    elif (Cluster[i].Nodes[j].best_reach.min_reachable_dist < min_dist):
+                        min_dist = Cluster[i].Nodes[j].best_reach.min_reachable_dist
+                        Cluster[i].best_extensible = Cluster[i].Nodes[j]
+                        Cluster[i].best_reachable = Cluster[i].Nodes[j].best_reach
     

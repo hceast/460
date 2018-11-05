@@ -19,22 +19,27 @@ class node:
         
         self.isOutside = True
         self.isRoot = False
-        self.isExtensible = False
-        self.isReachable = False
         
         self.Pred = []
         self.pred_idx = []
         self.child = "None"
-        
         self.distance = "None"
-        self.min_reachable_dist = "None"
         
+        self.isExtensible = False
+        self.isReachable = False
         self.reachable = []
+        self.reachability = 0
+        
         self.best_reach = "None"
         self.best_ext = "None"
         self.preferred_cluster = "None"
+        self.min_reachable_dist = "None"
         
-        self.reachability = 0
+        self.num_clust = 0
+        
+        self.isBoundary = False
+        self.best_adj_boundary = "None"
+        self.trial_distance = "None"
 
     def calc_distance(self):
         dist = "None"

@@ -22,6 +22,7 @@ class cluster:
         
         self.extensible = []
         self.reachable = []
+        self.boundary = []
         self.best_extensible = "None"
         self.best_reachable = "None"
 

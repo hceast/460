@@ -17,7 +17,7 @@ def assign_and_update(C_star, q_star, p_star):
     #Add q_star to Cluster
     C_star.Nodes.append(q_star)
     C_star.nodes_idx.append(q_star.index)
-    q_star.cluster = C_star
+    q_star.cluster = C_star.index
     
     #Update cluster weight and capacity
     C_star.weight += q_star.weight
