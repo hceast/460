@@ -13,13 +13,13 @@ from adjacent import get_adjacent
 from haversine import haversine
 
 #Reads in the excel file that contains all of the May 17th deliveries, and constructs a data frame
-deliv_517 = pd.read_excel("May_17_Delivery_Data.xlsx", sheet_name = "Delivery Data")
+delivs = pd.read_excel("May_17_Delivery_Data.xlsx", sheet_name = "Delivery Data")
 #Exclude addresses from the data frame, we only need Lat/Longs
-deliv_517 = deliv_517[["Longitude", "Latitude", "Delivery Volume"]].copy()
+delivs = delivs[["Longitude", "Latitude", "Delivery Volume"]].copy()
 
 #Establish target weights for balancing
-#target_weight = [(deliv_517["Delivery Volume"].sum()/3), (deliv_517["Delivery Volume"].sum()/3), (deliv_517["Delivery Volume"].sum()/3)]
-target_weight = [(deliv_517["Delivery Volume"].sum()*(3/8)), (deliv_517["Delivery Volume"].sum()*(3/8)), (deliv_517["Delivery Volume"].sum()*(1/4))]
+#target_weight = [(delivs["Delivery Volume"].sum()/3), (delivs["Delivery Volume"].sum()/3), (delivs["Delivery Volume"].sum()/3)]
+target_weight = [(delivs["Delivery Volume"].sum()*(3/8)), (delivs["Delivery Volume"].sum()*(3/8)), (delivs["Delivery Volume"].sum()*(1/4))]
 
 #Create data frame containing distribution center information
 dist_center = pd.read_excel("May_17_Delivery_Data.xlsx", sheet_name = "Centers")
@@ -30,26 +30,26 @@ dist_center = dist_center[["Longitude", "Latitude"]].copy()
 dist_center["Delivery Volume"] = target_weight
 
 #Make everything one data frame. Facility locations are at the bottom of the data frame.
-deliv_517 = pd.concat([deliv_517, dist_center[["Longitude", "Latitude", "Delivery Volume"]]], ignore_index = True)
+delivs = pd.concat([delivs, dist_center[["Longitude", "Latitude", "Delivery Volume"]]], ignore_index = True)
 
 #Distance Matrix that gives the great-circle distance between each pair of nodes
-D_Mat = np.zeros((len(deliv_517), len(deliv_517))) 
+D_Mat = np.zeros((len(delivs), len(delivs))) 
 
 i = 0
-for i in range(len(deliv_517)):
-    coords1 = (deliv_517["Longitude"][i], deliv_517["Latitude"][i])
+for i in range(len(delivs)):
+    coords1 = (delivs["Longitude"][i], delivs["Latitude"][i])
     
     j = 0
-    for j in range(len(deliv_517)):
-        coords2 = (deliv_517["Longitude"][j], deliv_517["Latitude"][j])
+    for j in range(len(delivs)):
+        coords2 = (delivs["Longitude"][j], delivs["Latitude"][j])
         D_Mat[i][j] = haversine(coords1, coords2)
 
 #%%
 #Create Voronoi diagram that will be the basis for clustering
-vor = Voronoi(deliv_517[["Longitude", "Latitude"]], qhull_options = "Qbb Qc Qx")
-#voronoi_plot_2d(vor)
-#fig = plt.figure()
-#plt.show()
+vor = Voronoi(delivs[["Longitude", "Latitude"]], qhull_options = "Qbb Qc Qx")
+voronoi_plot_2d(vor)
+fig = plt.figure()
+plt.show()
 
 #Determine node adjacencies
 all_adj = []
@@ -62,7 +62,7 @@ for i in range(len(vor.points)):
 
 #Append list of node adjacencies to deliv-517 dataframe   
 se2 = pd.Series(all_adj)
-deliv_517["Adj Nodes"] = se2.values
+delivs["Adj Nodes"] = se2.values
 
 #%%
 """
@@ -93,7 +93,7 @@ from Assign_and_Update import assign_and_update
 from Decision_Criteria import priority_weight, priority_card
 
 #Create Node set
-Node = [node(i, (deliv_517["Longitude"][i], deliv_517["Latitude"][i]), deliv_517["Delivery Volume"][i], deliv_517["Adj Nodes"][i]) for i in range(len(deliv_517))]
+Node = [node(i, (delivs["Longitude"][i], delivs["Latitude"][i]), delivs["Delivery Volume"][i], delivs["Adj Nodes"][i]) for i in range(len(delivs))]
 
 #Establish set Outside, which tracks the nodes that are not assigned to a cluster
 Outside = [Node[i].index for i in range(len(Node))]
@@ -105,7 +105,7 @@ Assigned_Nodes = []
 
 #Clusters take a Node object that will be the centroid, a balance target for the cluster, and a capacity.
 #This line creates 3 clusters with the facilities as the central locations.
-Cluster = [cluster(Node[i], deliv_517["Delivery Volume"][i], 999999999) for i in range(465,468)]
+Cluster = [cluster(Node[i], delivs["Delivery Volume"][i], 999999999) for i in range(465,468)]
 
 #This section of code assigns what are considered to be "better" initial centroids.
 """
@@ -158,7 +158,9 @@ for i in range(len(Node)):
         Reachable.append(Node[i].index)
 
 #%%
-while (len(Outside) > 12):
+while (len(Outside) > 10):
+#l = 0
+#for l in range(0, 456):
     
     #Identify the best reachable node for every extensible node, and the best extensible
     #node for every reachable node.
@@ -327,9 +329,10 @@ for i in range(len(Node)):
         Facility_Affiliations.append("Sweetwater")
     if (Node[i].cluster == "None"):
         Facility_Affiliations.append("None")
-        
-deliv_517["Facility Affiliations"] = Facility_Affiliations
+"""        
+delivs["Facility Affiliations"] = Facility_Affiliations
 
-writer = pd.ExcelWriter("May_17_Clustering_Results.xlsx", engine='xlsxwriter')
-deliv_517.to_excel(writer, sheet_name = "Clustering Results")
+writer = pd.ExcelWriter("May_24_Clustering_Results.xlsx", engine='xlsxwriter')
+delivs.to_excel(writer, sheet_name = "Clustering Results")
 writer.save()
+"""

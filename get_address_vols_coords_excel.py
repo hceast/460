@@ -9,14 +9,28 @@ Created on Fri Oct 26 13:14:02 2018
 import pandas as pd
 import numpy as np
 from GetCoords import get_coords
-from haversine_coords import haversine
+from haversine import haversine
 
-facilities = pd.read_excel("Building_Address.xlsx")
-facilities = facilities.loc[[13,19,7],["Facility Name","Latitude","Longitude"]]
+facilities = pd.read_excel("Building Address.xlsx")
+facilities = facilities.loc[[13,19,7], :]
+#facilities = facilities.loc[[13,19,7],["Facility Address Line 1","Facility City Name","Facility Postal Code", "Latitude", "Longitude"]]
 center_capacity = [999999999, 999999999, 999999999]
 se = pd.Series(center_capacity)
 facilities["Deliv Center Capac"] = se.values 
-#facilities = pd.DataFrame(data = facilities.values, index = [i for i in range(len(facilities))], columns = ['Facility','Latitude','Longitude'])
+facilities = facilities[["Facility Name", "Center Name", "Center Num", "Facility Address Line 1", "Facility City Name", "Facility City Name", "Facility Postal Code", "Deliv Center Capac"]].copy()
+
+myk_address = str(facilities.loc[13, "Facility Address Line 1"]) + ", " + facilities.loc[13, "Facility City Name"] + ", " + "TX" + " " + str(facilities.loc[13, "Facility Postal Code"])
+myk_coords = get_coords(myk_address)
+staff_address = str(facilities.loc[19, "Facility Address Line 1"]) + ", " + facilities.loc[19, "Facility City Name"] + ", " + "TX" + " " + str(facilities.loc[19, "Facility Postal Code"])
+staff_coords = get_coords(staff_address)
+sweet_address = str(facilities.loc[7, "Facility Address Line 1"]) + ", " + facilities.loc[7, "Facility City Name"] + ", " + "TX" + " " + str(facilities.loc[7, "Facility Postal Code"])
+sweet_coords = get_coords(sweet_address)
+
+Lat = [myk_coords[1], staff_coords[1], sweet_coords[1]]
+Long = [myk_coords[0], staff_coords[0], sweet_coords[0]]
+
+facilities["Latitude"] = Lat
+facilities["Longitude"] = Long
 
 #%%
 deliv_517 = pd.concat([pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Mykawa_517"), pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Stafford_517"), pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Sweetwater_517")], ignore_index = True) 
@@ -64,12 +78,12 @@ Dist_Mat.to_excel(writer, sheet_name = "Distance Matrix")
 writer.save()
 
 #%%
-"""
+
 writer = pd.ExcelWriter("May_17_Delivery_Data.xlsx", engine='xlsxwriter')
 facilities.to_excel(writer, sheet_name = "Centers")
 deliv_517.to_excel(writer, sheet_name = "Delivery Data")
 writer.save()
-"""
+
 #%%
 deliv_524 = pd.concat([pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Mykawa_524"), pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Stafford_524"), pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Sweetwater_524")], ignore_index = True)
 
@@ -116,13 +130,14 @@ Dist_Mat.to_excel(writer, sheet_name = "Distance Matrix")
 writer.save()
 
 #%%
-"""
+
 writer = pd.ExcelWriter("May_24_Delivery_Data.xlsx", engine='xlsxwriter')
 facilities.to_excel(writer, sheet_name = "Centers")
 deliv_524.to_excel(writer, sheet_name = "Delivery Data")
 writer.save()
-"""
+
 #%%
+"""
 import pandas as pd
 
 deliv_517 = pd.concat([pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Mykawa_517"), pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Stafford_517"), pd.read_excel("EAM_Deliveries.xlsx", sheet_name = "Sweetwater_517")], ignore_index = True)
@@ -209,3 +224,4 @@ zip_524["Assigned Facility"] = Assoc_Fac
 writer = pd.ExcelWriter("May_24_Zip_Data.xlsx", engine='xlsxwriter')
 zip_524.to_excel(writer, sheet_name = "Zip Data")
 writer.save()
+"""
